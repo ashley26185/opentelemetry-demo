@@ -31,7 +31,7 @@ service:
     traces:
       receivers: [otlp]
       processors: [spanmetrics, batch]
-      exporters: [logging, otlp]
+      exporters: [logging, otlp, appdynamics]
     metrics:
       receivers: [otlp]
       processors: [batch]
