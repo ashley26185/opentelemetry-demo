@@ -1,2 +1,46 @@
 # extra settings to be merged into OpenTelemetry Collector configuration
 # do not delete this file
+
+processors:
+  resource:
+    attributes:
+    - key: appdynamics.controller.account
+      action: upsert
+      value: "acme"
+    - key: appdynamics.controller.host
+      action: upsert
+      value: "acme.saas.appdynamics.com"
+    - key: appdynamics.controller.port
+      action: upsert
+      value: 443
+    - key: service.name
+      action: upsert		
+      value: shoppingcart
+    - key: service.namespace
+      action: upsert		
+      value: shop
+  batch:
+    timeout: 30s
+    send_batch_size: 90
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint:
+      http:
+        endpoint:
+exporters:
+  otlphttp:
+    #endpoint: "https://<your region>-sls-agent-api.saas.appdynamics.com"
+    endpoint: "https://fra-sls-agent-api.saas.appdynamics.com"
+    headers: {"x-api-key": "****************"}
+
+  logging:
+    loglevel: debug
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [resource, batch]
+      exporters: [otlphttp,logging]
